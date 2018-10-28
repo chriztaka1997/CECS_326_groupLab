@@ -26,7 +26,7 @@ int main() {
   bool sending = true;
   long count = 0;
 
-  //get_info(qid, (struct msgbuf *)&msg, size, msg.mtype);
+  get_info(qid, (struct msgbuf *)&msg, size, msg.mtype);
 
   while(sending)
   {
