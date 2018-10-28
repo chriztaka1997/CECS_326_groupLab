@@ -6,8 +6,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <cstdlib>
-#include <thread>
-#include <chrono>
+#include "get_info.h"
 
 using namespace std;
 
@@ -25,13 +24,19 @@ int main() {
   msg.mtype = 251;
   strcpy(msg.greeting, "Hello my name is 251");
   bool sending = true;
+  long count = 0;
+
+  //get_info(qid, (struct msgbuf *)&msg, size, msg.mtype);
 
   while(sending)
   {
-    this_thread::sleep_for (chrono::seconds(1));
-    cout << "Sender251: sending" << endl;
-    msgsnd(qid, (struct msgbuf *)&msg, size, 0);
+    if(count % 1000000000 == 0)
+    {
+      cout << "Sender251: sending: " << endl;
+      msgsnd(qid, (struct msgbuf *)&msg, size, 0);
+      count = 0;
+    }
+    count++;
   }
-  msg.mtype = -1;
-  msgsnd(qid, (struct msgbuf *)&msg, size, 0);
+
 }
