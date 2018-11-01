@@ -12,11 +12,13 @@ using namespace std;
 
 int main() {
 
-  int qid = msgget(ftok(".",'f'), 0);
+  int qid = msgget(ftok(".",'g'), 0);
 
   struct buf {
 		long mtype; // required
 		char greeting[50]; // mesg content
+    int senderID;
+    bool terminated;
 	};
 	buf msg;
 	int size = sizeof(msg)-sizeof(long);
@@ -24,7 +26,9 @@ int main() {
   msg.mtype = 251;
   strcpy(msg.greeting, "Hello my name is 251");
   bool sending = true;
-  long count = 0;
+  long count = 1;
+  msg.senderID = 251;
+  terminated = false;
 
   get_info(qid, (struct msgbuf *)&msg, size, msg.mtype);
 
@@ -32,11 +36,10 @@ int main() {
   {
     if(count % 1000000000 == 0)
     {
-      cout << "Sender251: sending: " << endl;
+      cout << "Sender251: sending: " << msg.greeting << endl;
       msgsnd(qid, (struct msgbuf *)&msg, size, 0);
       count = 0;
     }
     count++;
   }
-
 }

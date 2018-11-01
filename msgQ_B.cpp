@@ -1,4 +1,4 @@
-/* 
+/*
 
 This is a simple illustration of the use of:
 	ftok, msgget, msgsnd, msgrcv
@@ -13,7 +13,6 @@ by Program B.
 Both child processes use message type mtype = 113 and 114.
 
 */
-
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
@@ -27,7 +26,7 @@ using namespace std;
 int main() {
 
 	// create my msgQ with key value from ftok()
-	int qid = msgget(ftok(".",'u'), IPC_EXCL|IPC_CREAT|0600);
+	int qid = msgget(ftok(".",'z'), IPC_EXCL|IPC_CREAT|0600);
 
 	// declare my message buffer
 	struct buf {
@@ -38,25 +37,23 @@ int main() {
 	buf msg;
 	int size = sizeof(msg)-sizeof(long);
 
-	msgrcv(qid, (struct msgbuf *)&msg, size, 117, 0); // read mesg
-						// don't read "fake" mesg
-	cout << getpid() << ": gets message" << endl;
-	cout << "message: " << msg.greeting << endl;
-	
-	strcat(msg.greeting, " and Adios.");
-	cout << getpid() << ": sends reply" << endl;
-	msg.mtype = 314; // only reading mesg with type mtype = 314
-	msgsnd(qid, (struct msgbuf *)&msg, size, 0);
-	cout << getpid() << ": now exits" << endl;
-
-	msgrcv (qid, (struct msgbuf *)&msg, size, -112, 0);
-	msgrcv (qid, (struct msgbuf *)&msg, size, 0, 0);
-	msgrcv (qid, (struct msgbuf *)&msg, size, 117, 0);
+	int i = msgrcv(qid, (struct msgbuf *)&msg, size, 117, 0);
+	cout << endl << i << endl;
+	cout << getpid() << ": its working message" << endl;
+	cout << "message: " << msg.greeting << endl;// read mesg
+	// 	 // don't read "fake" mesg
+	// strcat(msg.greeting, " and Adios.");
+	// cout << getpid() << ": sends reply" << endl;
+	// msg.mtype = 314; // only reading mesg with type mtype = 314
+	// msgsnd(qid, (struct msgbuf *)&msg, size, 0);
+	// cout << getpid() << ": now exits" << endl;
+	//
+	// msgrcv (qid, (struct msgbuf *)&msg, size, -112, 0);
+	// msgrcv (qid, (struct msgbuf *)&msg, size, 0, 0);
+	//msgrcv (qid, (struct msgbuf *)&msg, size, 117, 0);
 
 	// now safe to delete message queue
 	msgctl (qid, IPC_RMID, NULL);
 
 	exit(0);
 }
-
-
