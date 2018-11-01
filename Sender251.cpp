@@ -12,7 +12,7 @@ using namespace std;
 
 int main() {
 
-  int qid = msgget(ftok(".",'g'), 0);
+  int qid = msgget(ftok(".",'k'), 0);
 
   struct buf {
 		long mtype; // required
@@ -21,6 +21,7 @@ int main() {
     bool terminated;
 	};
 	buf msg;
+  buf msg2;
 	int size = sizeof(msg)-sizeof(long);
 
   msg.mtype = 251;
@@ -28,9 +29,13 @@ int main() {
   bool sending = true;
   long count = 1;
   msg.senderID = 251;
-  terminated = false;
+  msg.terminated = false;
 
-  get_info(qid, (struct msgbuf *)&msg, size, msg.mtype);
+  msg2.mtype = 251;
+  strcpy(msg2.greeting, "Hello my name is 251");
+  msg2.senderID = 251;
+  msg2.terminated = true;
+  get_info(qid, (struct msgbuf *)&msg2, size, msg2.mtype);
 
   while(sending)
   {

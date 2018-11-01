@@ -9,8 +9,10 @@
 
 using namespace std;
 
+void sendDeathMessage(int);
+
 int main() {
-  int qid = msgget(ftok(".",'g'), IPC_EXCL|IPC_CREAT|0600);
+  int qid = msgget(ftok(".",'k'), IPC_EXCL|IPC_CREAT|0600);
 
   struct buf {
 		long mtype; // required
@@ -22,7 +24,7 @@ int main() {
 	int size = sizeof(msg)-sizeof(long);
 
   bool t251 = false;
-  bool t997 = false;
+  bool t997 = true;
   msg.mtype = 251;
   strcpy(msg.greeting, "Hello my name is reciever one");
   bool sending = true;
@@ -41,6 +43,7 @@ while(sending)
     }
     if(t997 == true && t251 == true)
     {
+      cout << endl << "Reached heree";
       sendDeathMessage(qid);
       break;
     }
