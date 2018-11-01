@@ -51,6 +51,7 @@ int main() {
 		cout << "current Sender ID: " << id << endl;
 		if(id == 997)
 		{
+			msg.senderID = 2; // ADDED THIS
 			strcat(msg.greeting, " and Adios.");
 			msg.mtype = 997;
 			msgsnd(qid, (struct msgbuf *)&msg, size, 0);
