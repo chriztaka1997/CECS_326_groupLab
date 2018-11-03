@@ -12,17 +12,24 @@ using namespace std;
 void sendDeathMessage(int);
 
 int main() {
-  int qid = msgget(ftok(".",'k'), IPC_EXCL|IPC_CREAT|0600);
+  int qid = msgget(ftok(".",'z'), IPC_EXCL|IPC_CREAT|0600);
 
   struct buf {
 		long mtype; // required
 		char greeting[50]; // mesg content
     int senderID;
     bool terminated;
+    int event;
 	};
 	buf msg;
+  buf msg2;
 	int size = sizeof(msg)-sizeof(long);
 
+  msg2.mtype = 997;
+  msg2.senderID = 1;
+  strcpy(msg2.greeting, "Hi i am reciever one acknowledgement");
+
+  msg.terminated = false;
   bool t251 = false;
   bool t997 = true;
   msg.mtype = 251;
@@ -32,18 +39,19 @@ int main() {
 
 while(sending)
   {
-    msgrcv (qid, (struct msgbuf *)&msg, size, 251, 0);
+    msgrcv (qid, (struct msgbuf *)&msg, size, 90, 0);
     if(msg.senderID > 0)
     {
-      cout << msg.greeting << " from: " << msg.senderID << endl;
-      if(msg.senderID == 251 && msg.terminated == true)
-        t251 = true;
-      else if(msg.senderID == 251 && msg.terminated == true)
+      cout << msg.greeting << " from: " << msg.senderID << " event: " << msg.event<< endl;
+      if(msg.senderID == 997 && msg.terminated == true)
         t997 = true;
+      else if(msg.senderID == 251 && msg.greeting == "Term")
+        t251 = true;
+      if(msg.senderID == 997)
+        msgsnd(qid, (struct msgbuf *)&msg2, size, 0);
     }
     if(t997 == true && t251 == true)
     {
-      cout << endl << "Reached heree";
       sendDeathMessage(qid);
       break;
     }

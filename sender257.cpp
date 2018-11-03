@@ -21,7 +21,7 @@ int randomGenerator(){
 //Main function
 int main() {
 
-  int qid = msgget(ftok(".",'g'), 0);
+  int qid = msgget(ftok(".",'z'), 0);
 
   struct buf {
 		long mtype; // required
@@ -49,7 +49,7 @@ int main() {
 
   while (send){
 
-		if (timer%100000 == 0){	//This is will slow down the sending process
+		if (timer%1000000 == 0){	//This is will slow down the sending process
 			cout<<"Send message to receiver 2"<<endl; //debug
 
 			msg.event = randomGenerator();

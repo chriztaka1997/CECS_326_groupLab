@@ -38,7 +38,7 @@ void killQueue(int qid){
 }
 
 int main(){
-  int qid = msgget(ftok(".",'u'), 0);
+  int qid = msgget(ftok(".",'z'), 0);
   int event = 0; //Random number
   int marker = 997;
 
@@ -58,21 +58,21 @@ int main(){
   bool rcv1_terminated = false;
   bool rcv2_terminated = false;
   bool waitFor2Messages = true;
-  bool received1 == false;
-  bool received2 == false;
+  bool received1 = false;
+  bool received2 = false;
   bool stay;
-  int timer = 0;
+  int timer = 1;
 
 while(sending){
 
-  if(timer%100000 == 0){
+  if(timer%1000000 == 0){
     event = randomNumberGenerator(); //generate random number
 
     if(event < 100){ //terminates if event is smaller than 100
       strcpy(msg.greeting, "Sender 997 Terminating");
       msg.mtype = 100; //for angel
       msgsnd(qid, (struct msgbuf *)&msg, size, 0);
-      msg.mtype = 200; //for chris main
+      msg.mtype = 90; //for chris main
       msgsnd(qid, (struct msgbuf *)&msg, size, 0);
       //killQueue(qid);//kill id
       sending = false;
@@ -88,7 +88,7 @@ while(sending){
       msgsnd(qid, (struct msgbuf *)&msg, size, 0);
       }
 
-      if(rcv2rcv2_terminated == false){ //sending to rcv 2
+      if(rcv2_terminated == false){ //sending to rcv 2
       msg.mtype = 90;
       msgsnd(qid, (struct msgbuf *)&msg, size, 0);
       }
@@ -108,16 +108,18 @@ while(sending){
           cout << getpid() << ": gets message" << endl;
           cout << "message: " << rcv.greeting << endl;
           cout << "sender id: " << rcv.senderID << endl;
-          received1 == true
+          received1 = true;
         }
         if(rcv.senderID == 2){
           cout << getpid() << ": gets message" << endl;
           cout << "message: " << rcv.greeting << endl;
           cout << "sender id: " << rcv.senderID << endl;
-          received2== true
+          received2 = true;
         }
         if(received1 == true && received2 == true){
           stay = false;
+          received1 = false;
+          received2 = false;
         }
       }
     }
@@ -144,8 +146,9 @@ while(sending){
     }
 
 
-
+    timer = 1;
   }//end of first if statement
+  timer++;
 }
 
 

@@ -12,7 +12,7 @@ using namespace std;
 int main() {
 
 	// create my msgQ with key value from ftok()
-	int qid = msgget(ftok(".",'g'), 0);
+	int qid = msgget(ftok(".",'z'), 0);
 
 	// declare my message buffer
 	struct buf {
@@ -40,7 +40,8 @@ int main() {
 		cout << getpid() << ": gets message" << endl;
 		cout << "message: " << msg.greeting << endl;
 		counter += 1;
-		cout << "current counter: " << counter << endl;
+		cout << "Total messages recieved: " << counter << endl;
+		//cout << "current counter: " << counter << endl;
 
 		/*
 		  After a receive statement is complete, the counter is incremented
@@ -52,7 +53,7 @@ int main() {
 		if(id == 997)
 		{
 			msg.senderID = 2; // ADDED THIS
-			strcat(msg.greeting, " and Adios.");
+			strcat(msg.greeting, " Reciever Two acknowledgement");
 			msg.mtype = 997;
 			msgsnd(qid, (struct msgbuf *)&msg, size, 0);
 

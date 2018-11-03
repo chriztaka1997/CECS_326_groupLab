@@ -10,41 +10,56 @@
 
 using namespace std;
 
+int randomNumberGenerator();
+
 int main() {
 
-  int qid = msgget(ftok(".",'k'), 0);
+  int qid = msgget(ftok(".",'z'), 0);
 
   struct buf {
 		long mtype; // required
 		char greeting[50]; // mesg content
     int senderID;
     bool terminated;
+    int event;
 	};
 	buf msg;
   buf msg2;
 	int size = sizeof(msg)-sizeof(long);
 
-  msg.mtype = 251;
+  msg.mtype = 90;
   strcpy(msg.greeting, "Hello my name is 251");
   bool sending = true;
   long count = 1;
   msg.senderID = 251;
   msg.terminated = false;
+  msg.event = randomNumberGenerator();
 
-  msg2.mtype = 251;
-  strcpy(msg2.greeting, "Hello my name is 251");
+  msg2.mtype = 90;
+  strcpy(msg2.greeting, "Term");
   msg2.senderID = 251;
   msg2.terminated = true;
   get_info(qid, (struct msgbuf *)&msg2, size, msg2.mtype);
 
   while(sending)
   {
-    if(count % 1000000000 == 0)
+    if(count % 1000000 == 0)
     {
       cout << "Sender251: sending: " << msg.greeting << endl;
       msgsnd(qid, (struct msgbuf *)&msg, size, 0);
       count = 0;
     }
     count++;
+  }
+}
+
+int randomNumberGenerator(){
+  int randomNumber = 0;
+  randomNumber = rand()%4294967296 + 1; //random number from 1 to 2^32
+  if(randomNumber%997 == 0){
+  return randomNumber;
+  }
+  else{
+    randomNumberGenerator();
   }
 }
