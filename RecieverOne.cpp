@@ -12,7 +12,7 @@ using namespace std;
 void sendDeathMessage(int);
 
 int main() {
-  int qid = msgget(ftok(".",'c'), IPC_EXCL|IPC_CREAT|0600);
+  int qid = msgget(ftok(".",'j'), IPC_EXCL|IPC_CREAT|0600);
 
   struct buf {
 		long mtype; // required
@@ -42,11 +42,17 @@ while(sending)
     msgrcv (qid, (struct msgbuf *)&msg, size, 110, 0);
     if(msg.senderID > 0)
     {
-      cout << msg.greeting << " from: " << msg.senderID << " event: " << msg.event<< endl;
+      cout << msg.greeting << " from: " << msg.senderID << " event: " << msg.event << " M[0]" << (msg.greeting[0] == 'T')<< endl;
       if(msg.senderID == 997 && msg.terminated == true)
+      {
         t997 = true;
-      else if(msg.senderID == 251 && msg.greeting == "Term")
+        cout << "Reached here 1" << endl;
+      }
+      else if(msg.senderID == 251 && msg.greeting[0] == 'T')
+      {
         t251 = true;
+        cout << "Reached here 2" << endl;
+      }
       if(msg.senderID == 997)
         msgsnd(qid, (struct msgbuf *)&msg2, size, 0);
     }
@@ -57,6 +63,8 @@ while(sending)
     }
     msg.senderID = 0;
   }
+  cout << "Finished running" <<endl;
+  exit(0);
 }
 
 void sendDeathMessage(int qid)

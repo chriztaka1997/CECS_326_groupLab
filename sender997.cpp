@@ -24,17 +24,12 @@ int randomNumberGenerator();
 
 int randomNumberGenerator(){
   int randomNumber = 0;
-  randomNumber = rand()%4294967296 + 1; //random number from 1 to 2^32
-  if(randomNumber%997 == 0){
+  randomNumber = rand()%5067296 + 1; //random number from 1 to 2^32
   return randomNumber;
-  }
-  else{
-    randomNumberGenerator();
-  }
 }
 
 int main(){
-  int qid = msgget(ftok(".",'c'), 0);
+  int qid = msgget(ftok(".",'j'), 0);
   int event = 0; //Random number
   int marker = 997;
 
@@ -62,17 +57,18 @@ int main(){
 
 while(sending){
 
-  if(timer%1000000 == 0){//if statement to slow down the rate of sent messages
+  if(timer%100000 == 0){//if statement to slow down the rate of sent messages
     event = randomNumberGenerator(); //generate random number
 
     if(event < 100){ //terminates if event is smaller than 100
       strcpy(msg.greeting, "Sender 997 Terminating");
       msg.mtype = 100; //for angel
       msgsnd(qid, (struct msgbuf *)&msg, size, 0);
-      msg.mtype = 90; //for chris main
+      msg.mtype = 110; //for chris main
+      msg.terminated = true;
       msgsnd(qid, (struct msgbuf *)&msg, size, 0);
       //killQueue(qid);//kill id
-      sending = false;
+      break;
     }
     else{ // else send event to receivers
       cout << "event: " << event << endl;
