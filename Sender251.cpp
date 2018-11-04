@@ -14,7 +14,7 @@ int randomNumberGenerator();
 
 int main() {
 
-  int qid = msgget(ftok(".",'z'), 0);
+  int qid = msgget(ftok(".",'c'), 0);
 
   struct buf {
 		long mtype; // required

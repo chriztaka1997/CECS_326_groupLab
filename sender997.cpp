@@ -34,7 +34,7 @@ int randomNumberGenerator(){
 }
 
 int main(){
-  int qid = msgget(ftok(".",'b'), 0);
+  int qid = msgget(ftok(".",'c'), 0);
   int event = 0; //Random number
   int marker = 997;
 

@@ -12,7 +12,7 @@ using namespace std;
 int main() {
 
 	// create my msgQ with key value from ftok()
-	int qid = msgget(ftok(".",'b'), 0);
+	int qid = msgget(ftok(".",'c'), 0);
 
 	// declare my message buffer
 	struct buf {

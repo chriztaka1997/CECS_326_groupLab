@@ -12,7 +12,7 @@ using namespace std;
 void sendDeathMessage(int);
 
 int main() {
-  int qid = msgget(ftok(".",'b'), IPC_EXCL|IPC_CREAT|0600);
+  int qid = msgget(ftok(".",'c'), IPC_EXCL|IPC_CREAT|0600);
 
   struct buf {
 		long mtype; // required
