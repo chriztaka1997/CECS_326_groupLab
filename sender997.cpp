@@ -42,8 +42,9 @@ int main(){
 		long mtype; // required
 		char greeting[50]; // mesg content
     int senderID = 997;
-    int event;
     bool terminated = false;
+    int event;
+
 	};
 	buf msg;//used to send events
   buf rcv; //used for receiving messages
@@ -121,10 +122,12 @@ while(sending){
           if(rcv.senderID == 1){
           cout << "receiver 1 terminated" << endl;
           rcv1_terminated = true;
+          stay = false;
           }
           else if(rcv.senderID == 2){
           cout << "receiver 2 terminated" << endl;
-          rcv2_terminated == true;
+          rcv2_terminated = true;
+          stay = false;
           }
           waitFor2Messages = false;
         }
@@ -141,7 +144,7 @@ while(sending){
         }
       }
     }
-    else if(rcv1_terminated ==true || rcv2_terminated == true){ //dont have to wait for both messages
+    else{ //dont have to wait for both messages
       cout << "waiting for one receiver. . . " << endl;
       msgrcv(qid, (struct msgbuf *)&rcv, size, 997, 0); // read mesg
       if(rcv.senderID == 1 || rcv.senderID ==2){
@@ -155,22 +158,18 @@ while(sending){
       //so you can stop sending messages if both terminate
       if(rcv.terminated ==true){
         if(rcv.senderID == 1){
+        cout<< "receiver 1 terminated" << endl;
         rcv1_terminated = true;
         }
         else if(rcv.senderID == 2){
-        rcv2_terminated == true;
+          cout << "receiver 2 terminated" << endl;
+        rcv2_terminated = true;
         }
         //waitFor2Messages = false;
       }
       cout << getpid() << ": " << endl;
 
       }
-    }
-
-    else{ //both receivers terminate
-          //should not reach here
-    cout << "both receivers have terminated" << endl;
-
     }
 
 
