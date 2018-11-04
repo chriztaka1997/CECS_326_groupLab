@@ -20,6 +20,7 @@ int main() {
 		char greeting[50]; // mesg content
 		int senderID; // Used to idenify a sender
 		bool terminated;
+		int event;
 	};
 
 	buf msg;
@@ -39,6 +40,7 @@ int main() {
 		msgrcv(qid, (struct msgbuf *)&msg, size, 100,0);
 		cout << getpid() << ": gets message" << endl;
 		cout << "message: " << msg.greeting << endl;
+		cout << "event: " << msg.event << endl;
 		counter += 1;
 		cout << "Total messages recieved: " << counter << endl;
 		//cout << "current counter: " << counter << endl;
@@ -53,7 +55,7 @@ int main() {
 		if(id == 997)
 		{
 			msg.senderID = 2; // ADDED THIS
-			strcat(msg.greeting, " Reciever Two acknowledgement");
+			strcpy(msg.greeting, " Reciever Two acknowledgement");
 			msg.mtype = 997;
 			msgsnd(qid, (struct msgbuf *)&msg, size, 0);
 
@@ -63,10 +65,11 @@ int main() {
 	}
 	cout << "END IT" << endl;
 	//Send Termination message
-	strcat(msg.greeting, "DONE");
+	strcpy(msg.greeting, "Receiver 2 terminated");
 	msg.mtype = 99;
 	msg.terminated = true;
 	msgsnd(qid, (struct msgbuf *)&msg, size, 0);
+	msg.mtype = 997;//for the homie ryan
 	msgsnd(qid, (struct msgbuf *)&msg, size, 0);
 
 	exit(0);

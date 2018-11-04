@@ -20,7 +20,7 @@ sender 997
 using namespace std;
 
 int randomNumberGenerator();
-void killQueue();
+
 
 int randomNumberGenerator(){
   int randomNumber = 0;
@@ -31,10 +31,6 @@ int randomNumberGenerator(){
   else{
     randomNumberGenerator();
   }
-}
-
-void killQueue(int qid){
-  msgctl (qid, IPC_RMID, NULL);
 }
 
 int main(){
@@ -65,7 +61,7 @@ int main(){
 
 while(sending){
 
-  if(timer%1000000 == 0){
+  if(timer%1000000 == 0){//if statement to slow down the rate of sent messages
     event = randomNumberGenerator(); //generate random number
 
     if(event < 100){ //terminates if event is smaller than 100
@@ -84,16 +80,17 @@ while(sending){
       strcpy(msg.greeting, "I am sender 997");
 
       if(rcv1_terminated == false){ //sending to rcv 1
-      msg.mtype = 100;
+      msg.mtype = 90;
       msgsnd(qid, (struct msgbuf *)&msg, size, 0);
+      cout << getpid() << ": sent message to receiver 1" << endl;
       }
 
       if(rcv2_terminated == false){ //sending to rcv 2
-      msg.mtype = 90;
+      msg.mtype = 100;
       msgsnd(qid, (struct msgbuf *)&msg, size, 0);
+      cout << getpid() << ": sent message to receiver 2" << endl;
       }
 
-      cout << getpid() << ": sent messages" << endl;
     }
 
 
@@ -102,35 +99,60 @@ while(sending){
 
     if(waitFor2Messages == true){ //have to wait for 2 messages
       stay = true;
+      cout << "waiting for acknowledgement from both receivers. . ." << endl;
       while(stay){
+
+        cout << "waitFor2Messages" << waitFor2Messages << endl; //tester
         msgrcv(qid, (struct msgbuf *)&rcv, size, 997, 0); // read mesg
         if(rcv.senderID == 1){
-          cout << getpid() << ": gets message" << endl;
+          cout << getpid() << ": gets message from receiver 1" << endl;
           cout << "message: " << rcv.greeting << endl;
           cout << "sender id: " << rcv.senderID << endl;
-          received1 = true;
+          received1 = true; //received message from receiver 1
         }
         if(rcv.senderID == 2){
-          cout << getpid() << ": gets message" << endl;
+          cout << getpid() << ": gets message from receiver 2" << endl;
           cout << "message: " << rcv.greeting << endl;
           cout << "sender id: " << rcv.senderID << endl;
-          received2 = true;
+          received2 = true; //received message from receiver 2
         }
-        if(received1 == true && received2 == true){
+
+        if(rcv.terminated ==true){
+          if(rcv.senderID == 1){
+          cout << "receiver 1 terminated" << endl;
+          rcv1_terminated = true;
+          }
+          else if(rcv.senderID == 2){
+          cout << "receiver 2 terminated" << endl;
+          rcv2_terminated == true;
+          }
+          waitFor2Messages = false;
+        }
+
+        if(received1 == true && received2 == true){ //received both
           stay = false;
-          received1 = false;
+          received1 = false; //reset both received booleans for next round
           received2 = false;
+        }
+
+        //break if it receives message from rcv1 and rc2 terminated already
+        if(received1 == true && rcv2_terminated ==true){
+          stay = false;
         }
       }
     }
-    else{ //dont have to wait for both messages
+    else if(rcv1_terminated ==true || rcv2_terminated == true){ //dont have to wait for both messages
+      cout << "waiting for one receiver. . . " << endl;
       msgrcv(qid, (struct msgbuf *)&rcv, size, 997, 0); // read mesg
       if(rcv.senderID == 1 || rcv.senderID ==2){
       // don't read "fake" mesg
       cout << getpid() << ": gets message" << endl;
       cout << "message: " << rcv.greeting << endl;
+      cout << "terminated: " << rcv.terminated << endl;
       cout << "sender id: " << rcv.senderID << endl;
 
+      //check both for termination still
+      //so you can stop sending messages if both terminate
       if(rcv.terminated ==true){
         if(rcv.senderID == 1){
         rcv1_terminated = true;
@@ -138,18 +160,24 @@ while(sending){
         else if(rcv.senderID == 2){
         rcv2_terminated == true;
         }
-        waitFor2Messages = false;
+        //waitFor2Messages = false;
       }
       cout << getpid() << ": " << endl;
 
       }
     }
 
+    else{ //both receivers terminate
+          //should not reach here
+    cout << "both receivers have terminated" << endl;
+
+    }
+
 
     timer = 1;
-  }//end of first if statement
+  }//end of if statement used to control speed
   timer++;
-}
+}//end of while loop
 
 
 

@@ -18,7 +18,7 @@ int main() {
 		long mtype; // required
 		char greeting[50]; // mesg content
     int senderID;
-    bool terminated;
+    bool terminated = false;
     int event;
 	};
 	buf msg;
@@ -31,7 +31,7 @@ int main() {
 
   msg.terminated = false;
   bool t251 = false;
-  bool t997 = true;
+  bool t997 = false;
   msg.mtype = 251;
   strcpy(msg.greeting, "Hello my name is reciever one");
   bool sending = true;
