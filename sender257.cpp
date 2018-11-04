@@ -28,7 +28,7 @@ void times_up(int s){
 //Main function
 int main() {
 
-  int qid = msgget(ftok(".",'z'), 0);
+  int qid = msgget(ftok(".",'y'), 0);
 
   struct buf {
 		long mtype; // required
@@ -63,7 +63,7 @@ int main() {
 		msgsnd(qid, (struct msgbuf *)&msg, size, 0);
 
 
-		alarm(1); //Interrupt the message receive after 1 second
+		alarm(.001); //Interrupt the message receive after 1 second
 		msgrcv(qid,(struct msgbuf *)&msg,size,99,0); //if receiver 2 terminated
 
 
@@ -78,6 +78,6 @@ int main() {
 	msg.terminated = true;
 	msgsnd(qid, (struct msgbuf *)&msg, size, 0);
 
-	cout<<"Terminating"
+	cout<<"Terminating";
 
 }

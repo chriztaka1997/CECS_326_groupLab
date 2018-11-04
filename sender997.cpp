@@ -34,7 +34,7 @@ int randomNumberGenerator(){
 }
 
 int main(){
-  int qid = msgget(ftok(".",'z'), 0);
+  int qid = msgget(ftok(".",'b'), 0);
   int event = 0; //Random number
   int marker = 997;
 
@@ -81,7 +81,7 @@ while(sending){
       strcpy(msg.greeting, "I am sender 997");
 
       if(rcv1_terminated == false){ //sending to rcv 1
-      msg.mtype = 90;
+      msg.mtype = 110;
       msgsnd(qid, (struct msgbuf *)&msg, size, 0);
       cout << getpid() << ": sent message to receiver 1" << endl;
       }
@@ -94,83 +94,105 @@ while(sending){
 
     }
 
-
-
     cout << "looking for acknowledgements" << endl;
-
-    if(waitFor2Messages == true){ //have to wait for 2 messages
-      stay = true;
-      cout << "waiting for acknowledgement from both receivers. . ." << endl;
-      while(stay){
-
-        cout << "waitFor2Messages" << waitFor2Messages << endl; //tester
-        msgrcv(qid, (struct msgbuf *)&rcv, size, 997, 0); // read mesg
-        if(rcv.senderID == 1){
-          cout << getpid() << ": gets message from receiver 1" << endl;
-          cout << "message: " << rcv.greeting << endl;
-          cout << "sender id: " << rcv.senderID << endl;
-          received1 = true; //received message from receiver 1
-        }
-        if(rcv.senderID == 2){
-          cout << getpid() << ": gets message from receiver 2" << endl;
-          cout << "message: " << rcv.greeting << endl;
-          cout << "sender id: " << rcv.senderID << endl;
-          received2 = true; //received message from receiver 2
-        }
-
-        if(rcv.terminated ==true){
-          if(rcv.senderID == 1){
-          cout << "receiver 1 terminated" << endl;
-          rcv1_terminated = true;
-          stay = false;
-          }
-          else if(rcv.senderID == 2){
-          cout << "receiver 2 terminated" << endl;
-          rcv2_terminated = true;
-          stay = false;
-          }
-          waitFor2Messages = false;
-        }
-
-        if(received1 == true && received2 == true){ //received both
-          stay = false;
-          received1 = false; //reset both received booleans for next round
-          received2 = false;
-        }
-
-        //break if it receives message from rcv1 and rc2 terminated already
-        if(received1 == true && rcv2_terminated ==true){
-          stay = false;
-        }
-      }
-    }
-    else{ //dont have to wait for both messages
-      cout << "waiting for one receiver. . . " << endl;
-      msgrcv(qid, (struct msgbuf *)&rcv, size, 997, 0); // read mesg
-      if(rcv.senderID == 1 || rcv.senderID ==2){
-      // don't read "fake" mesg
-      cout << getpid() << ": gets message" << endl;
-      cout << "message: " << rcv.greeting << endl;
-      cout << "terminated: " << rcv.terminated << endl;
-      cout << "sender id: " << rcv.senderID << endl;
-
-      //check both for termination still
-      //so you can stop sending messages if both terminate
-      if(rcv.terminated ==true){
-        if(rcv.senderID == 1){
-        cout<< "receiver 1 terminated" << endl;
-        rcv1_terminated = true;
-        }
-        else if(rcv.senderID == 2){
-          cout << "receiver 2 terminated" << endl;
+    if(rcv2_terminated == false)
+    {
+      msgrcv(qid, (struct msgbuf *)&rcv, size, -1, 0);
+      if(rcv.terminated == true)
         rcv2_terminated = true;
-        }
-        //waitFor2Messages = false;
-      }
-      cout << getpid() << ": " << endl;
-
-      }
+      cout << getpid() << ": gets message from receiver 2" << endl;
+      cout << "message: " << rcv.greeting << endl;
     }
+    msgrcv(qid, (struct msgbuf *)&rcv, size, 997, 0);
+    cout << getpid() << ": gets message from receiver 1" << endl;
+    cout << "message: " << rcv.greeting << endl;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // if(waitFor2Messages == true){ //have to wait for 2 messages
+    //   stay = true;
+    //   cout << "waiting for acknowledgement from both receivers. . ." << endl;
+    //   while(stay){
+    //
+    //     cout << "waitFor2Messages" << waitFor2Messages << endl; //tester
+    //     msgrcv(qid, (struct msgbuf *)&rcv, size, 997, 0); // read mesg
+    //     if(rcv.senderID == 1){
+    //       cout << getpid() << ": gets message from receiver 1" << endl;
+    //       cout << "message: " << rcv.greeting << endl;
+    //       cout << "sender id: " << rcv.senderID << endl;
+    //       received1 = true; //received message from receiver 1
+    //     }
+    //     if(rcv.senderID == 2){
+    //       cout << getpid() << ": gets message from receiver 2" << endl;
+    //       cout << "message: " << rcv.greeting << endl;
+    //       cout << "sender id: " << rcv.senderID << endl;
+    //       received2 = true; //received message from receiver 2
+    //     }
+    //
+    //     if(rcv.terminated ==true){
+    //       if(rcv.senderID == 1){
+    //       cout << "receiver 1 terminated" << endl;
+    //       rcv1_terminated = true;
+    //       stay = false;
+    //       }
+    //       else if(rcv.senderID == 2){
+    //       cout << "receiver 2 terminated" << endl;
+    //       rcv2_terminated = true;
+    //       stay = false;
+    //       }
+    //       waitFor2Messages = false;
+    //     }
+    //
+    //     if(received1 == true && received2 == true){ //received both
+    //       stay = false;
+    //       received1 = false; //reset both received booleans for next round
+    //       received2 = false;
+    //     }
+    //
+    //     //break if it receives message from rcv1 and rc2 terminated already
+    //     if(received1 == true && rcv2_terminated ==true){
+    //       stay = false;
+    //     }
+    //   }
+    // }
+    // else{ //dont have to wait for both messages
+    //   cout << "waiting for one receiver. . . " << endl;
+    //   msgrcv(qid, (struct msgbuf *)&rcv, size, 997, 0); // read mesg
+    //   if(rcv.senderID == 1 || rcv.senderID ==2){
+    //   // don't read "fake" mesg
+    //   cout << getpid() << ": gets message" << endl;
+    //   cout << "message: " << rcv.greeting << endl;
+    //   cout << "terminated: " << rcv.terminated << endl;
+    //   cout << "sender id: " << rcv.senderID << endl;
+    //
+    //   //check both for termination still
+    //   //so you can stop sending messages if both terminate
+    //   if(rcv.terminated ==true){
+    //     if(rcv.senderID == 1){
+    //     cout<< "receiver 1 terminated" << endl;
+    //     rcv1_terminated = true;
+    //     }
+    //     else if(rcv.senderID == 2){
+    //       cout << "receiver 2 terminated" << endl;
+    //     rcv2_terminated = true;
+    //     }
+    //     //waitFor2Messages = false;
+    //   }
+    //   cout << getpid() << ": " << endl;
+    //
+    //   }
+    // }
 
 
     timer = 1;

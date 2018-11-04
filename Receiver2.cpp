@@ -12,7 +12,7 @@ using namespace std;
 int main() {
 
 	// create my msgQ with key value from ftok()
-	int qid = msgget(ftok(".",'z'), 0);
+	int qid = msgget(ftok(".",'b'), 0);
 
 	// declare my message buffer
 	struct buf {
@@ -56,7 +56,7 @@ int main() {
 		{
 			msg.senderID = 2; // ADDED THIS
 			strcpy(msg.greeting, " Reciever Two acknowledgement");
-			msg.mtype = 997;
+			msg.mtype = 1;
 			msgsnd(qid, (struct msgbuf *)&msg, size, 0);
 
 		}
@@ -69,7 +69,7 @@ int main() {
 	msg.mtype = 99;
 	msg.terminated = true;
 	msgsnd(qid, (struct msgbuf *)&msg, size, 0);
-	msg.mtype = 997;//for the homie ryan
+	msg.mtype = 1;//for the homie ryan
 	msgsnd(qid, (struct msgbuf *)&msg, size, 0);
 
 	exit(0);

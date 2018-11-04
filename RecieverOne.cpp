@@ -12,7 +12,7 @@ using namespace std;
 void sendDeathMessage(int);
 
 int main() {
-  int qid = msgget(ftok(".",'z'), IPC_EXCL|IPC_CREAT|0600);
+  int qid = msgget(ftok(".",'b'), IPC_EXCL|IPC_CREAT|0600);
 
   struct buf {
 		long mtype; // required
@@ -39,7 +39,7 @@ int main() {
 
 while(sending)
   {
-    msgrcv (qid, (struct msgbuf *)&msg, size, 90, 0);
+    msgrcv (qid, (struct msgbuf *)&msg, size, 110, 0);
     if(msg.senderID > 0)
     {
       cout << msg.greeting << " from: " << msg.senderID << " event: " << msg.event<< endl;

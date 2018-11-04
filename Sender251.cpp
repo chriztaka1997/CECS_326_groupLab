@@ -27,7 +27,7 @@ int main() {
   buf msg2;
 	int size = sizeof(msg)-sizeof(long);
 
-  msg.mtype = 90;
+  msg.mtype = 110;
   strcpy(msg.greeting, "Hello my name is 251");
   bool sending = true;
   long count = 1;
@@ -35,7 +35,7 @@ int main() {
   msg.terminated = false;
   msg.event = randomNumberGenerator();
 
-  msg2.mtype = 90;
+  msg2.mtype = 110;
   strcpy(msg2.greeting, "Term");
   msg2.senderID = 251;
   msg2.terminated = true;
